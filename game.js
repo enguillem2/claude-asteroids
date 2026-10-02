@@ -62,6 +62,16 @@ const RADII  = [0, 16, 30, 50];   // por tamaño 1, 2, 3
 const SPEEDS = [0, 85, 55, 32];   // velocidad base por tamaño
 const POINTS = [0, 100, 50, 20];  // puntos por tamaño
 
+// Forma fija (vértices en píxeles de la imagen original) usada como una de las
+// variaciones del asteroide grande. Se centra y se normaliza al radio máximo.
+const FORMA_IMAGEN = (() => {
+  const px = [[188,63],[267,87],[251,171],[331,195],[308,282],[238,280],[205,335],[107,288],[62,206],[83,119]];
+  const cx = px.reduce((s, p) => s + p[0], 0) / px.length;
+  const cy = px.reduce((s, p) => s + p[1], 0) / px.length;
+  const max = Math.max(...px.map(p => Math.hypot(p[0] - cx, p[1] - cy)));
+  return px.map(p => [(p[0] - cx) / max, (p[1] - cy) / max]);
+})();
+
 class Asteroid {
   constructor(x, y, size = 3) {
     this.x    = x;
@@ -77,13 +87,19 @@ class Asteroid {
     this.rotSpeed = rand(-1.2, 1.2);
     this.rot = rand(0, Math.PI * 2);
 
-    // Polígono irregular
-    const n = randInt(8, 13);
     this.verts = [];
-    for (let i = 0; i < n; i++) {
-      const a = (i / n) * Math.PI * 2;
-      const r = this.radius * rand(0.6, 1.0);
-      this.verts.push([Math.cos(a) * r, Math.sin(a) * r]);
+    if (size === 3 && Math.random() < 1 / 3) {
+      // Variación fija basada en la imagen
+      for (const [vx, vy] of FORMA_IMAGEN)
+        this.verts.push([vx * this.radius, vy * this.radius]);
+    } else {
+      // Polígono irregular
+      const n = randInt(8, 13);
+      for (let i = 0; i < n; i++) {
+        const a = (i / n) * Math.PI * 2;
+        const r = this.radius * rand(0.6, 1.0);
+        this.verts.push([Math.cos(a) * r, Math.sin(a) * r]);
+      }
     }
   }
 
