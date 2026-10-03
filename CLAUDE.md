@@ -23,4 +23,4 @@ Key conventions:
 - Fixed logical canvas of `W`×`H` (800×600); space is toroidal — use `wrap(v, max)` for positions.
 - Asteroid sizes are 1–3 (small→large); `RADII`, `SPEEDS`, `POINTS` are arrays indexed by size (index 0 unused). Asteroids split via `a.split()` into the next size down.
 - Collisions are simple circle checks with `dist()`; ship vs asteroid uses `a.radius * 0.82` and is skipped while `ship.invincible > 0`.
-- Power-ups and the "shooting star" were removed from the game (see git history) even though the README still mentions them.
+- Power-ups and the "shooting star" were removed from the game (see git history) even though the README still mentions them. The one exception is the triple shot: `TriplePickup` always drops (on the first asteroid of size <= `TRIPLE_DROP_MAX_SIZE` destroyed) once per level (`tripleDropped`, reset in `nextLevel()`) when an asteroid is destroyed; picking it up sets `ship.tripleTimer` for `TRIPLE_DURATION` seconds, and dying clears it.
